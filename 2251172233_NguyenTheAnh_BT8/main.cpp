@@ -52,7 +52,7 @@ public:
     Calculate() : tb(0), te(0) {}
 
     double Calculator(const TaxableItem* t) {
-        // Ki?m tra ki?u c? th? (tuong t? instanceof trong Java)
+
         const TaxBook* book = dynamic_cast<const TaxBook*>(t);
         if (book) {
             tb = book;
