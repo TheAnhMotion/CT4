@@ -79,18 +79,6 @@ public abstract class QuanLySinhVienBase : IQuanLySinhVien
         DanhSachMonHoc.Remove(mon);
         Console.WriteLine("Da xoa mon hoc thanh cong.\n");
     }
-
-    public virtual void HienThiThongTinDanhSach() { }
-    public virtual void ThemSinhVien() { }
-    public virtual void SuaSinhVien() { }
-    public virtual void XoaSinhVien() { }
-    public virtual void ThemDiemSinhVien() { }
-    public virtual void SuaDiemSinhVien() { }
-    public virtual void XoaDiemSinhVien() { }
-    public virtual void ThemKhoa() { }
-    public virtual void SuaKhoa() { }
-    public virtual void XoaKhoa() { }
-    public virtual void TimKiem() { }
 }
 
 public class QuanLySinhVienChinhQuy : QuanLySinhVienBase { }
