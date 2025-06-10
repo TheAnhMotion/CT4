@@ -1,0 +1,98 @@
+public class MonHoc
+{
+    public string MaMonHoc { get; set; }
+    public string TenMonHoc { get; set; }
+    public int SoTinChi { get; set; }
+}
+
+public abstract class QuanLySinhVienBase : IQuanLySinhVien
+{
+    public List<SinhVien> DanhSachSinhVien { get; set; } = new();
+    public List<Diem> DanhSachDiem { get; set; } = new();
+    public List<Khoa> DanhSachKhoa { get; set; } = new();
+    public List<MonHoc> DanhSachMonHoc { get; set; } = new();
+
+    public void ThemMonHoc()
+    {
+        Console.WriteLine("=== THEM MON HOC ===");
+        Console.Write("Nhap ma mon hoc: ");
+        string ma = Console.ReadLine();
+
+        if (DanhSachMonHoc.Any(m => m.MaMonHoc == ma))
+        {
+            Console.WriteLine("Ma mon hoc da ton tai!");
+            return;
+        }
+
+        Console.Write("Nhap ten mon hoc: ");
+        string ten = Console.ReadLine();
+        Console.Write("Nhap so tin chi: ");
+        if (!int.TryParse(Console.ReadLine(), out int tinChi))
+        {
+            Console.WriteLine("So tin chi khong hop le.");
+            return;
+        }
+
+        DanhSachMonHoc.Add(new MonHoc { MaMonHoc = ma, TenMonHoc = ten, SoTinChi = tinChi });
+        Console.WriteLine("Da them mon hoc thanh cong.\n");
+    }
+
+    public void SuaMonHoc()
+    {
+        Console.WriteLine("=== SUA MON HOC ===");
+        Console.Write("Nhap ma mon hoc can sua: ");
+        string ma = Console.ReadLine();
+
+        var mon = DanhSachMonHoc.FirstOrDefault(m => m.MaMonHoc == ma);
+        if (mon == null)
+        {
+            Console.WriteLine("Khong tim thay mon hoc.\n");
+            return;
+        }
+
+        Console.Write("Nhap ten mon hoc moi: ");
+        mon.TenMonHoc = Console.ReadLine();
+        Console.Write("Nhap so tin chi moi: ");
+        if (!int.TryParse(Console.ReadLine(), out int tinChi))
+        {
+            Console.WriteLine("So tin chi khong hop le.");
+            return;
+        }
+
+        mon.SoTinChi = tinChi;
+        Console.WriteLine("Cap nhat thanh cong.\n");
+    }
+
+    public void XoaMonHoc()
+    {
+        Console.WriteLine("=== XOA MON HOC ===");
+        Console.Write("Nhap ma mon hoc can xoa: ");
+        string ma = Console.ReadLine();
+
+        var mon = DanhSachMonHoc.FirstOrDefault(m => m.MaMonHoc == ma);
+        if (mon == null)
+        {
+            Console.WriteLine("Khong tim thay mon hoc.\n");
+            return;
+        }
+
+        DanhSachMonHoc.Remove(mon);
+        Console.WriteLine("Da xoa mon hoc thanh cong.\n");
+    }
+
+    public virtual void HienThiThongTinDanhSach() { }
+    public virtual void ThemSinhVien() { }
+    public virtual void SuaSinhVien() { }
+    public virtual void XoaSinhVien() { }
+    public virtual void ThemDiemSinhVien() { }
+    public virtual void SuaDiemSinhVien() { }
+    public virtual void XoaDiemSinhVien() { }
+    public virtual void ThemKhoa() { }
+    public virtual void SuaKhoa() { }
+    public virtual void XoaKhoa() { }
+    public virtual void TimKiem() { }
+}
+
+public class QuanLySinhVienChinhQuy : QuanLySinhVienBase { }
+
+public class QuanLySinhVienLienThong : QuanLySinhVienBase { }
