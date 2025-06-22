@@ -5,6 +5,7 @@ using namespace std;
 class TaxableItem {
 public:
     virtual double CalculateTax() const = 0;
+    virtual void notify(TaxableItem* sender, double tax) = 0;
     virtual ~TaxableItem() {}
 };
 
@@ -16,8 +17,14 @@ private:
 public:
     TaxBook(double price) : price(price) {}
 
-    double CalculateTax() const {
+    double CalculateTax() const override {
         return price * 0.2;
+    }
+
+    void notify(TaxableItem* sender, double tax) override {
+        if (sender != this) {
+            cout << "Thuế sách được tính là $" << tax << endl;
+        }
     }
 
     double CalculateTaxBook() const {
@@ -33,8 +40,14 @@ private:
 public:
     TaxElectronics(double price) : price(price) {}
 
-    double CalculateTax() const {
+    double CalculateTax() const override {
         return price * 0.5;
+    }
+
+    void notify(TaxableItem* sender, double tax) override {
+        if (sender != this) {
+            cout << "Thuế điện tử được tính là $" << tax << endl;
+        }
     }
 
     double CalculateTaxElectronics() const {
@@ -42,39 +55,40 @@ public:
     }
 };
 
-// Class Calculate
+// Mediator Class Calculate
 class Calculate {
 private:
-    const TaxBook* tb;
-    const TaxElectronics* te;
+    TaxBook* tb;
+    TaxElectronics* te;
 
 public:
-    Calculate() : tb(0), te(0) {}
+    Calculate() : tb(nullptr), te(nullptr) {}
 
-    double Calculator(const TaxableItem* t) {
+    void setTaxBook(TaxBook* book) {
+        tb = book;
+    }
 
-        const TaxBook* book = dynamic_cast<const TaxBook*>(t);
-        if (book) {
-            tb = book;
-            return calculateBook();
+    void setTaxElectronics(TaxElectronics* electronics) {
+        te = electronics;
+    }
+
+    double Calculator(TaxableItem* item) {
+        if (item == nullptr) {
+            cout << "Đối tượng không hợp lệ" << endl;
+            return 0.0;
         }
 
-        const TaxElectronics* electronics = dynamic_cast<const TaxElectronics*>(t);
-        if (electronics) {
-            te = electronics;
-            return calculateTaxElectronics();
+        double tax = item->CalculateTax();
+        if (tb && item == dynamic_cast<TaxableItem*>(tb)) {
+            if (te) te->notify(item, tax);
+            return tb->CalculateTaxBook();
         }
-
-        cerr << "Unsupported item type" << endl;
+        if (te && item == dynamic_cast<TaxableItem*>(te)) {
+            if (tb) tb->notify(item, tax);
+            return te->CalculateTaxElectronics();
+        }
+        cout << "Loại đối tượng không được hỗ trợ" << endl;
         return 0.0;
-    }
-
-    double calculateBook() const {
-        return tb->CalculateTaxBook();
-    }
-
-    double calculateTaxElectronics() const {
-        return te->CalculateTaxElectronics();
     }
 };
 
@@ -84,14 +98,15 @@ int main() {
     TaxElectronics electronics(500.0);
 
     Calculate calc;
+    calc.setTaxBook(&book);
+    calc.setTaxElectronics(&electronics);
 
     double tax1 = calc.Calculator(&book);
     double tax2 = calc.Calculator(&electronics);
 
-    cout << "Book Tax: $" << tax1 << endl;
-    cout << "Electronics Tax: $" << tax2 << endl;
-    cout << "Total Tax: $" << (tax1 + tax2) << endl;
+    cout << "Thuế Sách: $" << tax1 << endl;
+    cout << "Thuế Điện Tử: $" << tax2 << endl;
+    cout << "Tổng Thuế: $" << (tax1 + tax2) << endl;
 
     return 0;
 }
-
